@@ -24,3 +24,4 @@ mvn exec:java -Dexec.mainClass="org.example.Java21FeaturesDemo" -q
 echo ""
 
 echo "=== 运行完成 ==="
+
