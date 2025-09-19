@@ -1,0 +1,15 @@
+package org.example.chapter12;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * Spring Security 示例应用程序主类
+ */
+@SpringBootApplication
+public class Chapter12Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Chapter12Application.class, args);
+    }
+}
