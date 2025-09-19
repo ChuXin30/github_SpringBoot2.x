@@ -9,7 +9,10 @@ import org.springframework.test.context.TestPropertySource;
  */
 @SpringBootTest
 @TestPropertySource(properties = {
-    "logging.level.org.springframework.security=WARN"
+    "logging.level.org.springframework.security=WARN",
+    "spring.security.user.name=",
+    "spring.security.user.password=",
+    "spring.security.user.roles="
 })
 class Chapter12ApplicationTests {
 
