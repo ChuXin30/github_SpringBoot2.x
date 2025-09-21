@@ -42,7 +42,7 @@ public class AuthService {
         
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBasicAuth(clientId, clientSecret);
+        // 公开客户端不需要Basic Auth
         
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
@@ -81,7 +81,7 @@ public class AuthService {
         
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBasicAuth(clientId, clientSecret);
+        // 公开客户端不需要Basic Auth
         
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
@@ -119,7 +119,7 @@ public class AuthService {
         
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBasicAuth(clientId, clientSecret);
+        // 公开客户端不需要Basic Auth
         
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("refresh_token", refreshToken);

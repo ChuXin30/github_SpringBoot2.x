@@ -21,7 +21,7 @@
       "name": "API Gateway Client",
       "description": "Client for API Gateway",
       "enabled": true,
-      "publicClient": false,
+      "publicClient": true,
       "bearerOnly": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
