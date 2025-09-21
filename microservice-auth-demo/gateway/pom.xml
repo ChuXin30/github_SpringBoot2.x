@@ -49,14 +49,12 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- 服务发现 - 暂时禁用Nacos -->
-        <!--
+        <!-- 服务发现 - Nacos启用 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <version>2022.0.0.0</version>
         </dependency>
-        -->
 
         <!-- 负载均衡 -->
         <dependency>

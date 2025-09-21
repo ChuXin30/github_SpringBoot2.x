@@ -15,27 +15,26 @@ public class GatewayConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-            // 用户服务路由 - 临时使用直连（优先级高）
+            // 直连路由 - 立即可用（优先级高）
+            .route("auth-service-direct", r -> r.path("/auth/**")
+                .uri("http://localhost:8081"))  // 直连认证服务
+            
             .route("user-service-direct", r -> r.path("/api/user/**")
                 .filters(f -> f
                     .stripPrefix(1)  // 移除 /api 前缀
                     .filter(new JwtAuthenticationFilter()))  // JWT验证过滤器
                 .uri("http://localhost:8082"))  // 直连用户服务
             
-            // 认证服务路由 - 临时使用直连（优先级高）
-            .route("auth-service-direct", r -> r.path("/auth/**")
-                .uri("http://localhost:8081"))  // 直连认证服务
+            // Nacos负载均衡路由 - 当网关注册后生效（优先级低）
+            .route("auth-service-lb", r -> r.path("/auth-lb/**")
+                .filters(f -> f.rewritePath("/auth-lb/(?<segment>.*)", "/auth/${segment}"))
+                .uri("lb://auth-service"))  // Nacos负载均衡
             
-            // Nacos路由（作为备用，优先级低）
-            .route("user-service-nacos", r -> r.path("/api/user-nacos/**")
+            .route("user-service-lb", r -> r.path("/api/user-lb/**")
                 .filters(f -> f
-                    .rewritePath("/api/user-nacos/(?<segment>.*)", "/user/${segment}")
+                    .rewritePath("/api/user-lb/(?<segment>.*)", "/user/${segment}")
                     .filter(new JwtAuthenticationFilter()))
                 .uri("lb://user-service"))  // Nacos负载均衡
-            
-            .route("auth-service-nacos", r -> r.path("/auth-nacos/**")
-                .filters(f -> f.rewritePath("/auth-nacos/(?<segment>.*)", "/auth/${segment}"))
-                .uri("lb://auth-service"))  // Nacos负载均衡
             
             // 支持传统路由作为备用（开发环境）
             .route("user-service-fallback", r -> r.path("/api/user-direct/**")
