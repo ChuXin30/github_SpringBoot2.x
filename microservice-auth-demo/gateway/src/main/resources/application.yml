@@ -43,7 +43,9 @@ spring:
 # JWT配置
 jwt:
   secret: mySecretKey12345678901234567890123456789012345678901234567890
-  expiration: 86400  # 24小时
+  expiration: 86400  # 24小时（秒）
+  issuer: microservice-auth  # JWT签发者
+  audience: gateway  # JWT受众
 
 # Keycloak配置
 keycloak:

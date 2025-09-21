@@ -1,5 +1,6 @@
 package com.example.gateway.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GatewayConfig {
     
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
@@ -22,7 +26,7 @@ public class GatewayConfig {
             .route("user-service-direct", r -> r.path("/api/user/**")
                 .filters(f -> f
                     .stripPrefix(1)  // 移除 /api 前缀
-                    .filter(new JwtAuthenticationFilter()))  // JWT验证过滤器
+                    .filter(jwtAuthenticationFilter))  // JWT验证过滤器
                 .uri("http://localhost:8082"))  // 直连用户服务
             
             // Nacos负载均衡路由 - 当网关注册后生效（优先级低）
@@ -33,14 +37,14 @@ public class GatewayConfig {
             .route("user-service-lb", r -> r.path("/api/user-lb/**")
                 .filters(f -> f
                     .rewritePath("/api/user-lb/(?<segment>.*)", "/user/${segment}")
-                    .filter(new JwtAuthenticationFilter()))
+                    .filter(jwtAuthenticationFilter))
                 .uri("lb://user-service"))  // Nacos负载均衡
             
             // 支持传统路由作为备用（开发环境）
             .route("user-service-fallback", r -> r.path("/api/user-direct/**")
                 .filters(f -> f
                     .rewritePath("/api/user-direct/(?<segment>.*)", "/user/${segment}")
-                    .filter(new JwtAuthenticationFilter()))
+                    .filter(jwtAuthenticationFilter))
                 .uri("http://localhost:8082"))  // 直连备用
                 
             .route("auth-service-fallback", r -> r.path("/auth-direct/**")
