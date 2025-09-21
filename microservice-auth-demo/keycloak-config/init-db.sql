@@ -99,10 +99,10 @@ INSERT IGNORE INTO user_roles (user_id, role_id) VALUES
 (3, 3); -- manager用户拥有管理者角色
 
 -- 创建索引优化查询性能
-CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
+CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
 
 -- 显示初始化完成信息
 SELECT '数据库初始化完成！' as message;

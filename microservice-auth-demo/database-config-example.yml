@@ -1,0 +1,53 @@
+# 数据库连接配置示例
+# 如果您的微服务需要连接MySQL数据库，请参考以下配置
+
+spring:
+  datasource:
+    # MySQL数据库连接 (端口已修改为3307)
+    url: jdbc:mysql://localhost:3307/microservice_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: app_user
+    password: app_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+    # 连接池配置
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      max-lifetime: 600000
+      connection-timeout: 30000
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+---
+# Docker环境配置 (如果应用也在容器中运行)
+spring:
+  profiles: docker
+  datasource:
+    # 容器内访问MySQL (使用容器名称和内部端口)
+    url: jdbc:mysql://mysql-db:3306/microservice_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: app_user
+    password: app_password
+
+---
+# 生产环境配置示例
+spring:
+  profiles: production
+  datasource:
+    # 生产环境数据库连接
+    url: jdbc:mysql://prod-mysql-host:3307/microservice_db?useSSL=true&serverTimezone=UTC
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+      leak-detection-threshold: 60000

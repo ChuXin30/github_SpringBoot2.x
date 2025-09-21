@@ -9,7 +9,7 @@
 
 - ✅ **Keycloak**: 运行正常 (端口 8180)
 - ✅ **Redis**: 运行正常 (端口 6379) 
-- ❌ **MySQL**: 暂时跳过 (端口冲突)
+- ✅ **MySQL**: 端口3307 (避免与本地MySQL冲突)
 - ❌ **Nacos**: 暂时跳过 (简化演示)
 
 ## 🚀 现在启动微服务
@@ -77,7 +77,7 @@ cd /Users/hanggao/github_code/SpringBoot2.x/microservice-auth-demo
 为了快速演示核心认证功能，我们暂时：
 - ✅ 保留了Keycloak (核心认证服务)
 - ✅ 保留了Redis (缓存)
-- ❌ 跳过了MySQL (避免端口冲突)
+- ✅ MySQL使用3307端口 (避免端口冲突)
 - ❌ 跳过了Nacos (简化架构)
 
 这不影响核心的**JWT + API网关 + 微服务认证**功能演示！
@@ -87,6 +87,6 @@ cd /Users/hanggao/github_code/SpringBoot2.x/microservice-auth-demo
 如果你想启动完整版本，需要：
 1. 停止本地MySQL服务 (如果有)
 2. 使用原始的 `docker-compose.yml`
-3. 或者修改MySQL端口为其他值 (如3307)
+3. 或者修改MySQL端口为其他值 (当前已设置为3307)
 
 但目前的简化版本已足够展示完整的现代微服务认证架构！

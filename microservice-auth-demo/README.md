@@ -75,7 +75,7 @@ docker-compose up -d
 
 这将启动：
 - Keycloak (端口: 8180)
-- MySQL (端口: 3306)
+- MySQL (端口: 3307)
 - Redis (端口: 6379)
 - Nacos (端口: 8848)
 

@@ -112,7 +112,7 @@ chmod +x test-api.sh
 |------|----------|----------|
 | **Keycloak管理** | http://localhost:8180/auth/admin | admin / admin123 |
 | **Nacos控制台** | http://localhost:8848/nacos | nacos / nacos |
-| **MySQL数据库** | localhost:3306 | root / root123 |
+| **MySQL数据库** | localhost:3307 | root / root123 |
 
 ## 🧪 测试验证
 
@@ -160,7 +160,7 @@ curl -H "Authorization: Bearer ADMIN_TOKEN" \
 | **8082** | 用户服务 | `curl http://localhost:8082/actuator/health` |
 | **8180** | Keycloak | `curl http://localhost:8180/auth/health` |
 | **8848** | Nacos | `curl http://localhost:8848/nacos` |
-| **3306** | MySQL | `docker exec mysql-db mysqladmin ping` |
+| **3307** | MySQL | `docker exec mysql-db mysqladmin ping` |
 | **6379** | Redis | `docker exec redis-cache redis-cli ping` |
 
 ## ⚠️ 常见问题解决
@@ -171,7 +171,7 @@ curl -H "Authorization: Bearer ADMIN_TOKEN" \
 # 检查端口占用
 lsof -i :8080
 lsof -i :8180
-lsof -i :3306
+lsof -i :3307
 
 # 停止占用端口的进程
 kill -9 <PID>
