@@ -54,8 +54,11 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
     /**
      * 根据角色查询用户
      */
-    @Query("SELECT up FROM UserProfile up JOIN up.roles r WHERE r = :roleName AND up.isActive = true")
-    List<UserProfile> findByRoleAndActive(@Param("roleName") String roleName);
+    // 角色查询已移除 - 角色信息在Keycloak中管理
+    // @Query("SELECT up FROM UserProfile up JOIN up.roles r WHERE r = :roleName AND up.isActive = true")
+    default List<UserProfile> findByRoleAndActive(String roleName) {
+        return List.of(); // 返回空列表，角色管理在Keycloak中
+    }
     
     /**
      * 查询最近登录的用户

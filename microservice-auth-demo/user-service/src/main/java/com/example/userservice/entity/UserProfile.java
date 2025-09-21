@@ -3,7 +3,7 @@ package com.example.userservice.entity;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
-import java.util.Set;
+// import java.util.Set; // 不再需要Set导入，角色由Keycloak管理
 
 /**
  * 用户资料实体 - MySQL数据持久化
@@ -40,11 +40,8 @@ public class UserProfile {
     @Column(name = "position")
     private String position;
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", 
-                    joinColumns = @JoinColumn(name = "user_profile_id"))
-    @Column(name = "role_name")
-    private Set<String> roles;
+    // 角色信息从JWT中获取，不需要在数据库中重复存储
+    // private Set<String> roles; // 已移除
     
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
@@ -99,8 +96,7 @@ public class UserProfile {
     public String getPosition() { return position; }
     public void setPosition(String position) { this.position = position; }
     
-    public Set<String> getRoles() { return roles; }
-    public void setRoles(Set<String> roles) { this.roles = roles; }
+    // 角色相关的getter/setter已移除，角色信息从JWT获取
     
     public LocalDateTime getLastLogin() { return lastLogin; }
     public void setLastLogin(LocalDateTime lastLogin) { this.lastLogin = lastLogin; }

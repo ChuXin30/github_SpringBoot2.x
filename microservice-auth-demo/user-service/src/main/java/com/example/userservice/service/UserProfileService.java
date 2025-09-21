@@ -96,12 +96,13 @@ public class UserProfileService {
     }
     
     /**
-     * 获取角色用户列表 (带缓存)
+     * 获取角色用户列表 - 已移除角色数据库存储
+     * 角色信息在Keycloak/JWT中管理
      */
-    @Cacheable(value = "roleUsers", key = "#roleName")
+    // @Cacheable(value = "roleUsers", key = "#roleName")
     public List<UserProfile> getUsersByRole(String roleName) {
-        logger.debug("查询角色用户: {}", roleName);
-        return userProfileRepository.findByRoleAndActive(roleName);
+        logger.debug("角色查询已简化 - 角色由Keycloak管理: {}", roleName);
+        return List.of(); // 返回空列表，角色在JWT中管理
     }
     
     /**
@@ -157,7 +158,7 @@ public class UserProfileService {
         profile.setDisplayName("新用户");
         profile.setDepartment("未分配");
         profile.setPosition("员工");
-        profile.setRoles(Set.of("user"));
+        // profile.setRoles(Set.of("user")); // 角色由Keycloak管理，不存储在数据库
         profile.setIsActive(true);
         
         return userProfileRepository.save(profile);
@@ -173,7 +174,7 @@ public class UserProfileService {
         if (updated.getDepartment() != null) existing.setDepartment(updated.getDepartment());
         if (updated.getPosition() != null) existing.setPosition(updated.getPosition());
         if (updated.getAvatarUrl() != null) existing.setAvatarUrl(updated.getAvatarUrl());
-        if (updated.getRoles() != null) existing.setRoles(updated.getRoles());
+        // if (updated.getRoles() != null) existing.setRoles(updated.getRoles()); // 角色由Keycloak管理
         if (updated.getIsActive() != null) existing.setIsActive(updated.getIsActive());
         existing.setUpdatedAt(LocalDateTime.now());
     }
