@@ -20,23 +20,16 @@ public class GatewayConfig {
                 .filters(f -> f
                     .stripPrefix(1)  // 移除 /api 前缀
                     .filter(new JwtAuthenticationFilter()))  // JWT验证过滤器
-                .uri("lb://user-service"))  // 负载均衡到用户服务
-            
-            // 订单服务路由
-            .route("order-service", r -> r.path("/api/order/**")
-                .filters(f -> f
-                    .stripPrefix(1)
-                    .filter(new JwtAuthenticationFilter()))
-                .uri("lb://order-service"))
+                .uri("http://localhost:8082"))  // 直连用户服务
             
             // 认证服务路由（直接转发，不验证JWT）
             .route("auth-service", r -> r.path("/auth/**")
-                .uri("http://keycloak:8080"))
+                .uri("http://localhost:8081"))  // 直连认证服务
             
-            // 公开API（无需认证）
-            .route("public-api", r -> r.path("/public/**")
-                .filters(f -> f.stripPrefix(1))
-                .uri("lb://public-service"))
+            // 根路径重定向到index.html
+            .route("root-redirect", r -> r.path("/")
+                .filters(f -> f.redirect(302, "/index.html"))
+                .uri("no://op"))
                 
             .build();
     }

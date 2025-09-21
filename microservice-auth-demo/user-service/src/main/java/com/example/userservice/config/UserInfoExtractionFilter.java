@@ -74,4 +74,3 @@ public class UserInfoExtractionFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-

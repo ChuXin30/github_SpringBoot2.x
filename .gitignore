@@ -7,3 +7,4 @@
 /microservice-auth-demo/auth-service/target/
 /microservice-auth-demo/gateway/target/
 /microservice-auth-demo/user-service/target/
+/microservice-auth-demo/logs/

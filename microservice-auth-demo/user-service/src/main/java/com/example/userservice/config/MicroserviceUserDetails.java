@@ -3,7 +3,9 @@ package com.example.userservice.config;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
-import java.util.Map; /**
+import java.util.Map;
+
+/**
  * 微服务用户详情类
  * 封装从API网关传递过来的用户信息
  */

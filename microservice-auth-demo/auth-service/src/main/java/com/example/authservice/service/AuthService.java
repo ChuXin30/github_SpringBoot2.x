@@ -9,7 +9,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -150,7 +149,9 @@ public class AuthService {
         ResponseEntity<String> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, request, String.class);
         
         if (response.getStatusCode() == HttpStatus.OK) {
-            return objectMapper.readValue(response.getBody(), Map.class);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> result = objectMapper.readValue(response.getBody(), Map.class);
+            return result;
         } else {
             throw new RuntimeException("令牌验证失败: " + response.getBody());
         }

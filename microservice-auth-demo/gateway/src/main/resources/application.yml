@@ -6,14 +6,10 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true  # 启用服务发现
-          lower-case-service-id: true
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns: "*"
             allowedMethods:
               - GET
               - POST
@@ -22,12 +18,6 @@ spring:
               - OPTIONS
             allowedHeaders: "*"
             allowCredentials: true
-  # 服务发现配置
-  cloud:
-    nacos:
-      discovery:
-        server-addr: localhost:8848
-        namespace: microservice-auth
 
 # JWT配置
 jwt:
