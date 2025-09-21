@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Keycloak 认证服务器
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0.0
+    container_name: keycloak-auth-server
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123
+      # 开发模式使用默认的H2文件数据库，无需指定KC_DB
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - keycloak_data:/opt/keycloak/data  # 持久化Keycloak数据
+    command:
+      - start-dev
+      - --import-realm
+      - --health-enabled=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: microservice_db
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass redis123
+
+  # Nacos 服务注册中心
+  nacos:
+    image: nacos/nacos-server:v2.2.0
+    container_name: nacos-server
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: true
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - nacos_data:/home/nacos/data
+
+volumes:
+  mysql_data:
+  nacos_data:
+  keycloak_data:  # Keycloak数据持久化
+
+networks:
+  default:
+    name: microservice-network

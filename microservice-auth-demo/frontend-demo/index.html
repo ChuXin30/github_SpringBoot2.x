@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微服务认证架构 - 前端演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        .section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .section h3 {
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .form-group {
+            margin: 1rem 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .response-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .user-info {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 微服务认证架构演示</h1>
+            <p>API网关 + JWT + Keycloak + Spring Security</p>
+        </div>
+
+        <!-- 登录区域 -->
+        <div class="section" id="loginSection">
+            <h3>🔐 用户登录</h3>
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" value="testuser" placeholder="输入用户名">
+            </div>
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" id="password" value="testpassword" placeholder="输入密码">
+            </div>
+            <button class="btn" onclick="login()">登录</button>
+            <button class="btn" onclick="loginAsAdmin()">管理员登录</button>
+            <div id="loginResponse" class="response-area hidden"></div>
+        </div>
+
+        <!-- 用户信息区域 -->
+        <div class="section hidden" id="userInfoSection">
+            <h3>👤 当前用户信息</h3>
+            <div id="userInfo" class="user-info"></div>
+            <button class="btn btn-danger" onclick="logout()">退出登录</button>
+        </div>
+
+        <!-- API测试区域 -->
+        <div class="section hidden" id="apiTestSection">
+            <h3>🔧 API 测试</h3>
+            <button class="btn" onclick="getProfile()">获取用户资料</button>
+            <button class="btn" onclick="getUserList()">获取用户列表(管理员)</button>
+            <button class="btn" onclick="updateUser()">更新用户信息</button>
+            <button class="btn" onclick="getPublicInfo()">公开API</button>
+            <div id="apiResponse" class="response-area hidden"></div>
+        </div>
+
+        <!-- 令牌管理区域 -->
+        <div class="section hidden" id="tokenSection">
+            <h3>🎫 令牌管理</h3>
+            <button class="btn" onclick="refreshToken()">刷新令牌</button>
+            <button class="btn" onclick="verifyToken()">验证令牌</button>
+            <div id="tokenResponse" class="response-area hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+        let accessToken = '';
+        let refreshTokenValue = '';
+        let currentUser = null;
+
+        // 登录函数
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                displayResponse('loginResponse', data);
+                
+                if (data.success) {
+                    accessToken = data.access_token;
+                    refreshTokenValue = data.refresh_token;
+                    currentUser = { username };
+                    
+                    showLoggedInState();
+                    showMessage('登录成功！', 'success');
+                } else {
+                    showMessage('登录失败：' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('登录错误：' + error.message, 'error');
+            }
+        }
+
+        // 管理员登录
+        async function loginAsAdmin() {
+            document.getElementById('username').value = 'admin';
+            document.getElementById('password').value = 'adminpassword';
+            await login();
+        }
+
+        // 退出登录
+        async function logout() {
+            if (refreshTokenValue) {
+                try {
+                    await fetch(`${API_BASE}/auth/logout`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ refreshToken: refreshTokenValue })
+                    });
+                } catch (error) {
+                    console.error('登出错误:', error);
+                }
+            }
+            
+            accessToken = '';
+            refreshTokenValue = '';
+            currentUser = null;
+            showLoggedOutState();
+            showMessage('已退出登录', 'success');
+        }
+
+        // 获取用户资料
+        async function getProfile() {
+            try {
+                const response = await fetch(`${API_BASE}/api/user/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                displayResponse('apiResponse', data);
+            } catch (error) {
+                showMessage('获取资料失败：' + error.message, 'error');
+            }
+        }
+
+        // 获取用户列表
+        async function getUserList() {
+            try {
+                const response = await fetch(`${API_BASE}/api/user/list`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                displayResponse('apiResponse', data);
+                
+                if (response.status === 403) {
+                    showMessage('权限不足，需要管理员权限', 'error');
+                }
+            } catch (error) {
+                showMessage('获取用户列表失败：' + error.message, 'error');
+            }
+        }
+
+        // 更新用户信息
+        async function updateUser() {
+            const userId = currentUser ? currentUser.username : 'testuser';
+            try {
+                const response = await fetch(`${API_BASE}/api/user/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'updated@example.com',
+                        phone: '1234567890'
+                    })
+                });
+                
+                const data = await response.json();
+                displayResponse('apiResponse', data);
+            } catch (error) {
+                showMessage('更新失败：' + error.message, 'error');
+            }
+        }
+
+        // 公开API
+        async function getPublicInfo() {
+            try {
+                const response = await fetch(`${API_BASE}/api/user/public/info`);
+                const data = await response.json();
+                displayResponse('apiResponse', data);
+            } catch (error) {
+                showMessage('获取公开信息失败：' + error.message, 'error');
+            }
+        }
+
+        // 刷新令牌
+        async function refreshToken() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/refresh`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ refreshToken: refreshTokenValue })
+                });
+                
+                const data = await response.json();
+                displayResponse('tokenResponse', data);
+                
+                if (data.success) {
+                    accessToken = data.access_token;
+                    refreshTokenValue = data.refresh_token;
+                    showMessage('令牌刷新成功', 'success');
+                }
+            } catch (error) {
+                showMessage('刷新令牌失败：' + error.message, 'error');
+            }
+        }
+
+        // 验证令牌
+        async function verifyToken() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ accessToken: accessToken })
+                });
+                
+                const data = await response.json();
+                displayResponse('tokenResponse', data);
+            } catch (error) {
+                showMessage('验证令牌失败：' + error.message, 'error');
+            }
+        }
+
+        // 显示响应
+        function displayResponse(elementId, data) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(data, null, 2);
+            element.classList.remove('hidden');
+        }
+
+        // 显示消息
+        function showMessage(message, type) {
+            // 移除之前的消息
+            const existingMsg = document.querySelector('.message');
+            if (existingMsg) {
+                existingMsg.remove();
+            }
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${type}`;
+            msgDiv.textContent = message;
+            
+            document.querySelector('.container').insertBefore(
+                msgDiv, 
+                document.querySelector('.section')
+            );
+            
+            setTimeout(() => {
+                msgDiv.remove();
+            }, 5000);
+        }
+
+        // 显示已登录状态
+        function showLoggedInState() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('userInfoSection').classList.remove('hidden');
+            document.getElementById('apiTestSection').classList.remove('hidden');
+            document.getElementById('tokenSection').classList.remove('hidden');
+            
+            document.getElementById('userInfo').innerHTML = `
+                <strong>用户名:</strong> ${currentUser.username}<br>
+                <strong>访问令牌:</strong> ${accessToken.substring(0, 50)}...<br>
+                <strong>状态:</strong> 已登录
+            `;
+        }
+
+        // 显示未登录状态
+        function showLoggedOutState() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('userInfoSection').classList.add('hidden');
+            document.getElementById('apiTestSection').classList.add('hidden');
+            document.getElementById('tokenSection').classList.add('hidden');
+            
+            // 清空响应区域
+            document.getElementById('loginResponse').classList.add('hidden');
+            document.getElementById('apiResponse').classList.add('hidden');
+            document.getElementById('tokenResponse').classList.add('hidden');
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            showMessage('欢迎使用微服务认证架构演示系统！', 'success');
+        });
+    </script>
+</body>
+</html>

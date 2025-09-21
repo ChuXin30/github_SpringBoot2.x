@@ -1,0 +1,21 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: user-service
+  security:
+    # 微服务内部不需要复杂的认证配置
+    # 认证已在网关层完成
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+# 日志配置
+logging:
+  level:
+    com.example.userservice: DEBUG
+    org.springframework.security: DEBUG

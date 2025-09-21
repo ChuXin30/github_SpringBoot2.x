@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Keycloak 认证服务器 - 简化版本
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0.0
+    container_name: keycloak-auth-server
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123
+      # 开发模式使用默认的文件数据库
+      KC_HEALTH_ENABLED: true
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - keycloak_data:/opt/keycloak/data
+    command:
+      - start-dev
+      - --import-realm
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass redis123
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  keycloak_data:
+
+networks:
+  default:
+    name: microservice-network

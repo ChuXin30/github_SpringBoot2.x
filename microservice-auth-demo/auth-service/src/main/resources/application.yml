@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+
+# Keycloak配置 - 适配新版本路径
+keycloak:
+  auth-server-url: http://localhost:8180
+  realm: microservice-realm
+  resource: gateway-client
+  credentials:
+    secret: your-gateway-client-secret
+
+# 日志配置
+logging:
+  level:
+    com.example.authservice: DEBUG
+    org.springframework.web: DEBUG
