@@ -2,6 +2,7 @@ package com.example.userservice.entity;
 
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 // import java.util.Set; // 不再需要Set导入，角色由Keycloak管理
 
@@ -44,12 +45,15 @@ public class UserProfile {
     // private Set<String> roles; // 已移除
     
     @Column(name = "last_login")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastLogin;
     
     @Column(name = "created_at", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
     
     @Column(name = "is_active")

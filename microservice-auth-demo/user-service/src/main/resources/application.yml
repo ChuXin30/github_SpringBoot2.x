@@ -62,6 +62,16 @@ spring:
   security:
     # 微服务内部不需要复杂的认证配置
     # 认证已在网关层完成
+  # Jackson JSON配置
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      write-date-timestamps-as-nanoseconds: false
+    deserialization:
+      read-date-timestamps-as-nanoseconds: false
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    
   data:
     redis:
       host: localhost
