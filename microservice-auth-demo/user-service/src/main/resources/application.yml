@@ -4,18 +4,106 @@ server:
 spring:
   application:
     name: user-service
+  
+  # MySQL数据源配置
+  datasource:
+    url: jdbc:mysql://localhost:3307/microservice_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: app_user
+    password: app_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      max-lifetime: 600000
+      connection-timeout: 30000
+      pool-name: UserServiceHikariCP
+      
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        use_sql_comments: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  
+  # Redis缓存配置
+  redis:
+    host: localhost
+    port: 6379
+    password: redis123
+    database: 0
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+  
+  # 缓存配置
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000 # 10分钟
+      cache-null-values: false
+      
+  # Nacos服务发现配置
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: microservice-auth
+        group: DEFAULT_GROUP
+        service: ${spring.application.name}
+        cluster-name: default
+        username: nacos
+        password: nacos
+        metadata:
+          version: 1.0.0
+          author: microservice-team
+        register-enabled: true
+        heartbeat-interval: 5000
+        heartbeat-timeout: 15000
+        
   security:
     # 微服务内部不需要复杂的认证配置
     # 认证已在网关层完成
 
+# 服务管理配置
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,prometheus,caches
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+      
+# 业务配置
+user-service:
+  cache:
+    user-profile-ttl: 600 # 用户资料缓存10分钟
+    department-list-ttl: 1800 # 部门列表缓存30分钟
+  database:
+    connection-timeout: 30000
+    query-timeout: 10000
 
 # 日志配置
 logging:
   level:
     com.example.userservice: DEBUG
     org.springframework.security: DEBUG
+    org.springframework.cache: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.alibaba.nacos: INFO

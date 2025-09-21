@@ -18,6 +18,27 @@ spring:
               - OPTIONS
             allowedHeaders: "*"
             allowCredentials: true
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+          
+    # Nacos服务发现配置
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: microservice-auth
+        group: DEFAULT_GROUP
+        service: ${spring.application.name}
+        cluster-name: default
+        username: nacos
+        password: nacos
+        metadata:
+          version: 1.0.0
+          author: microservice-team
+        register-enabled: true
+        heartbeat-interval: 5000
+        heartbeat-timeout: 15000
 
 # JWT配置
 jwt:

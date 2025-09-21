@@ -4,6 +4,45 @@ server:
 spring:
   application:
     name: auth-service
+  
+  # Redis配置 - JWT黑名单和会话缓存
+  redis:
+    host: localhost
+    port: 6379
+    password: redis123
+    database: 1  # 使用数据库1，避免与用户服务冲突
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+  
+  # 缓存配置
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000  # JWT相关缓存1小时
+      cache-null-values: false
+      
+  # Nacos服务发现配置
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: microservice-auth
+        group: DEFAULT_GROUP
+        service: ${spring.application.name}
+        cluster-name: default
+        username: nacos
+        password: nacos
+        metadata:
+          version: 1.0.0
+          author: microservice-team
+        register-enabled: true
+        heartbeat-interval: 5000
+        heartbeat-timeout: 15000
 
 # Keycloak配置 - 适配新版本路径
 keycloak:
@@ -13,8 +52,33 @@ keycloak:
   credentials:
     secret: your-gateway-client-secret
 
+# 认证服务配置
+auth-service:
+  jwt:
+    blacklist-cache-ttl: 3600 # JWT黑名单缓存1小时
+    refresh-token-ttl: 1800   # 刷新令牌缓存30分钟
+  rate-limit:
+    login-attempts: 5         # 登录尝试次数限制
+    lockout-duration: 900     # 锁定时间15分钟
+    
+# 服务管理配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,caches
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
 # 日志配置
 logging:
   level:
     com.example.authservice: DEBUG
     org.springframework.web: DEBUG
+    org.springframework.cache: DEBUG
+    org.springframework.data.redis: DEBUG
+    com.alibaba.nacos: INFO
