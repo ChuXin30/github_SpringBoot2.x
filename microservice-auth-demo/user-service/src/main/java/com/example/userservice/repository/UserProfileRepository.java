@@ -2,6 +2,7 @@ package com.example.userservice.repository;
 
 import com.example.userservice.entity.UserProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -75,6 +76,7 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
     /**
      * 更新最后登录时间
      */
+    @Modifying
     @Query("UPDATE UserProfile up SET up.lastLogin = :loginTime, up.updatedAt = :updateTime WHERE up.userId = :userId")
     void updateLastLogin(@Param("userId") String userId, 
                         @Param("loginTime") LocalDateTime loginTime,

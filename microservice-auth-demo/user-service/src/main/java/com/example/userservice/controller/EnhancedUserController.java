@@ -48,15 +48,12 @@ public class EnhancedUserController {
                 "basic", Map.of(
                     "userId", profile.getUserId(),
                     "username", profile.getUsername(),
-                    "displayName", profile.getDisplayName(),
-                    "email", profile.getEmail(),
-                    "phone", profile.getPhone()
+                    "displayName", profile.getDisplayName()
                 ),
                 "organization", Map.of(
                     "department", profile.getDepartment(),
                     "position", profile.getPosition()),
                 "profile", Map.of(
-                    "avatarUrl", profile.getAvatarUrl(),
                     "lastLogin", profile.getLastLogin(),
                     "createdAt", profile.getCreatedAt(),
                     "updatedAt", profile.getUpdatedAt(),
