@@ -33,20 +33,7 @@ spring:
         use_sql_comments: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
   
-  # Redis缓存配置
-  redis:
-    host: localhost
-    port: 6379
-    password: redis123
-    database: 0
-    timeout: 2000ms
-    lettuce:
-      pool:
-        max-active: 8
-        max-wait: -1ms
-        max-idle: 8
-        min-idle: 0
-  
+  # Redis缓存配置 - 简化配置
   # 缓存配置
   cache:
     type: redis
@@ -75,6 +62,13 @@ spring:
   security:
     # 微服务内部不需要复杂的认证配置
     # 认证已在网关层完成
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: redis123
+      database: 0
+      timeout: 5000ms
 
 # 服务管理配置
 management:

@@ -29,7 +29,7 @@ public class UserProfileService {
     /**
      * 根据用户ID获取用户资料 (带Redis缓存)
      */
-    @Cacheable(value = "user-profiles", key = "#userId", unless = "#result == null")
+    @Cacheable(value = "userProfiles", key = "#userId", unless = "#result == null")
     public UserProfile getUserProfile(String userId) {
         logger.debug("从数据库查询用户资料: {}", userId);
         Optional<UserProfile> profile = userProfileRepository.findByUserId(userId);
@@ -65,7 +65,7 @@ public class UserProfileService {
     /**
      * 删除用户资料 (清除缓存)
      */
-    @CacheEvict(value = "user-profiles", key = "#userId")
+    @CacheEvict(value = "userProfiles", key = "#userId")
     public boolean deleteUserProfile(String userId) {
         logger.debug("删除用户资料: {}", userId);
         Optional<UserProfile> profile = userProfileRepository.findByUserId(userId);
@@ -79,7 +79,7 @@ public class UserProfileService {
     /**
      * 更新最后登录时间
      */
-    @CacheEvict(value = "user-profiles", key = "#userId")
+    @CacheEvict(value = "userProfiles", key = "#userId")
     public void updateLastLogin(String userId) {
         logger.debug("更新最后登录时间: {}", userId);
         LocalDateTime now = LocalDateTime.now();
@@ -89,7 +89,7 @@ public class UserProfileService {
     /**
      * 获取部门用户列表 (带缓存)
      */
-    @Cacheable(value = "department-users", key = "#department")
+    @Cacheable(value = "departmentUsers", key = "#department")
     public List<UserProfile> getUsersByDepartment(String department) {
         logger.debug("查询部门用户: {}", department);
         return userProfileRepository.findByDepartmentAndIsActiveTrue(department);
@@ -98,7 +98,7 @@ public class UserProfileService {
     /**
      * 获取角色用户列表 (带缓存)
      */
-    @Cacheable(value = "role-users", key = "#roleName")
+    @Cacheable(value = "roleUsers", key = "#roleName")
     public List<UserProfile> getUsersByRole(String roleName) {
         logger.debug("查询角色用户: {}", roleName);
         return userProfileRepository.findByRoleAndActive(roleName);
@@ -107,7 +107,7 @@ public class UserProfileService {
     /**
      * 获取最近活跃用户
      */
-    @Cacheable(value = "recent-users", key = "#hours")
+    @Cacheable(value = "recentUsers", key = "#hours")
     public List<UserProfile> getRecentlyActiveUsers(int hours) {
         logger.debug("查询最近{}小时活跃用户", hours);
         LocalDateTime since = LocalDateTime.now().minusHours(hours);
@@ -117,7 +117,7 @@ public class UserProfileService {
     /**
      * 获取部门统计 (带缓存)
      */
-    @Cacheable(value = "department-stats")
+    @Cacheable(value = "departmentStats")
     public Map<String, Long> getDepartmentStatistics() {
         logger.debug("查询部门统计信息");
         List<Object[]> results = userProfileRepository.countUsersByDepartment();
@@ -141,7 +141,7 @@ public class UserProfileService {
     /**
      * 根据用户名查询用户资料
      */
-    @Cacheable(value = "user-profiles-by-username", key = "#username")
+    @Cacheable(value = "userProfilesByUsername", key = "#username")
     public UserProfile getUserProfileByUsername(String username) {
         logger.debug("根据用户名查询用户资料: {}", username);
         return userProfileRepository.findByUsername(username).orElse(null);
