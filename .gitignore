@@ -9,3 +9,6 @@
 /microservice-auth-demo/user-service/target/
 /microservice-auth-demo/logs/
 /chapter13/target/
+/chapter14/target/
+/chapter13Async/target/
+/chapter13Mq/target/

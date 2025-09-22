@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  activemq:
+    image: apache/activemq-artemis:latest
+    container_name: activemq-artemis
+    ports:
+      - "61616:61616"  # OpenWire 端口 (JMS 客户端连接)
+      - "8161:8161"    # Web 控制台端口
+      - "5672:5672"    # AMQP 端口
+      - "1883:1883"    # MQTT 端口
+      - "61613:61613"  # STOMP 端口
+    environment:
+      - ARTEMIS_USERNAME=admin
+      - ARTEMIS_PASSWORD=admin
+      - ANONYMOUS_LOGIN=true
+    volumes:
+      - activemq_data:/var/lib/artemis-instance
+      - ./activemq-config:/var/lib/artemis-instance/etc
+    networks:
+      - activemq-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8161/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  activemq_data:
+    driver: local
+
+networks:
+  activemq-network:
+    driver: bridge

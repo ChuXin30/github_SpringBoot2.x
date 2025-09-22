@@ -1,0 +1,21 @@
+# 测试环境配置文件
+server:
+  port: 0  # 随机端口，避免测试时端口冲突
+
+spring:
+  application:
+    name: chapter13Mq-activemq-test
+  
+  # 测试环境禁用JMS自动配置
+  jms:
+    enabled: false
+
+# 测试环境日志配置
+logging:
+  level:
+    "org.example.chapter14": DEBUG
+    "org.springframework.jms": WARN
+    "org.apache.activemq": WARN
+    "org.springframework.test": DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
