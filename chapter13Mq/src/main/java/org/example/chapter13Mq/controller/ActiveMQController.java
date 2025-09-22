@@ -1,16 +1,14 @@
-package org.example.chapter14.controller;
+package org.example.chapter13Mq.controller;
 
-import org.example.chapter14.model.OrderMessage;
-import org.example.chapter14.model.UserMessage;
-import org.example.chapter14.service.MessageConsumerService;
-import org.example.chapter14.service.MessageProducerService;
+import org.example.chapter13Mq.model.OrderMessage;
+import org.example.chapter13Mq.model.UserMessage;
+import org.example.chapter13Mq.service.MessageConsumerService;
+import org.example.chapter13Mq.service.MessageProducerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

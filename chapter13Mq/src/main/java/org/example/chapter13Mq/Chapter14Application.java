@@ -1,4 +1,4 @@
-package org.example.chapter14;
+package org.example.chapter13Mq;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

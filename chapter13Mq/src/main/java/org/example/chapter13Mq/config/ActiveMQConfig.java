@@ -1,4 +1,4 @@
-package org.example.chapter14.config;
+package org.example.chapter13Mq.config;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;

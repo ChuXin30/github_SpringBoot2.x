@@ -1,11 +1,10 @@
-package org.example.chapter14.service;
+package org.example.chapter13Mq.service;
 
-import org.example.chapter14.model.OrderMessage;
-import org.example.chapter14.model.UserMessage;
+import org.example.chapter13Mq.model.OrderMessage;
+import org.example.chapter13Mq.model.UserMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.annotation.JmsListeners;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicLong;
