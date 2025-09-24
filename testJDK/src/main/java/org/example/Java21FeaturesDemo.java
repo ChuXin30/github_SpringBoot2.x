@@ -11,7 +11,8 @@ public class Java21FeaturesDemo {
     public static void main(String[] args) {
         System.out.println("🚀 Java 21 新特性演示程序");
         System.out.println("=" .repeat(50));
-        
+
+
         try {
             // 1. Record 特性演示
             System.out.println("\n📋 1. Record 特性演示");
